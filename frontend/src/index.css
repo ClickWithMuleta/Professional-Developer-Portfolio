@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Light Theme (Companion) */
+  :root {
+    --bg-canvas: #fafafa;
+    --bg-canvas-subtle: #f4f4f5;
+    --surface-1: #ffffff;
+    --surface-2: #f4f4f5;
+    --surface-3: #e4e4e7;
+    --stroke-muted: #e4e4e7;
+    --stroke-active: #d4d4d8;
+    --accent-primary: #059669;
+    --accent-electric: #10b981;
+    --accent-dim: rgba(5, 150, 105, 0.1);
+    --text-primary: #09090b;
+    --text-secondary: #52525b;
+    --text-muted: #71717a;
+    --dot-color: rgba(0, 0, 0, 0.08);
+  }
+
+  /* Dark Theme (Primary Default) */
+  .dark {
+    --bg-canvas: #09090b;
+    --bg-canvas-subtle: #0e0e11;
+    --surface-1: #121215;
+    --surface-2: #18181b;
+    --surface-3: #1f1f23;
+    --stroke-muted: #27272a;
+    --stroke-active: #3f3f46;
+    --accent-primary: #10b981;
+    --accent-electric: #00ff88;
+    --accent-dim: rgba(16, 185, 129, 0.12);
+    --text-primary: #f4f4f5;
+    --text-secondary: #a1a1aa;
+    --text-muted: #71717a;
+    --dot-color: rgba(255, 255, 255, 0.08);
+  }
+
+  body {
+    background-color: var(--bg-canvas);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg-canvas);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--stroke-muted);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--stroke-active);
+  }
+}
+
+@layer utilities {
+  /* Architectural Technical Grid / Dot Matrix */
+  .bg-dot-grid {
+    background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .bg-grid-lines {
+    background-size: 40px 40px;
+    background-image: 
+      linear-gradient(to right, var(--dot-color) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--dot-color) 1px, transparent 1px);
+  }
+
+  /* Radial glow masking */
+  .mask-radial-fade {
+    mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
+    -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
+  }
+}
