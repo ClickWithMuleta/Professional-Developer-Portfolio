@@ -2,58 +2,20 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import MainLayout from './components/layout/MainLayout';
+import HeroSection from './features/hero/HeroSection';
 import Section from './components/common/Section';
-import Container from './components/common/Container';
-import Button from './components/common/Button';
 import Badge from './components/common/Badge';
-import { ArrowRight, Code2, Layers, Sparkles, Terminal, Briefcase, User, Mail, Cpu } from 'lucide-react';
+import Button from './components/common/Button';
+import { Layers, Terminal, Briefcase, User, Mail, Cpu } from 'lucide-react';
 
-const PortfolioTestView = () => {
+const PortfolioMainView = () => {
   return (
     <>
-      {/* 1. Home Section */}
-      <Section id="home" variant="grid" className="scroll-mt-24 border-b border-stroke-muted min-h-[70vh] flex items-center">
-        <div className="max-w-3xl">
-          <Badge variant="accent" size="md" withDot className="mb-4">
-            Phase 4.1: Navigation System Active
-          </Badge>
-          <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-text-primary mb-4">
-            Muleta Sisay
-            <span className="block text-text-secondary text-xl sm:text-2xl font-normal mt-2">
-              Software Developer • Backend Architecture • React • Machine Learning
-            </span>
-          </h1>
-          <p className="text-text-secondary text-base leading-relaxed mb-8">
-            Welcome to my developer portfolio. Explore the sticky navbar above with active scroll-spy highlighting, dark/light theme switching, CV download, and smooth keyboard navigation.
-          </p>
+      {/* 1. Production Hero Section */}
+      <HeroSection />
 
-          <div className="flex flex-wrap items-center gap-3">
-            <Button
-              variant="primary"
-              rightIcon={<ArrowRight className="w-4 h-4" />}
-              onClick={() => {
-                const el = document.getElementById('projects');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-            >
-              View Projects
-            </Button>
-            <Button
-              variant="secondary"
-              leftIcon={<Terminal className="w-4 h-4" />}
-              onClick={() => {
-                const el = document.getElementById('about');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-            >
-              About Me
-            </Button>
-          </div>
-        </div>
-      </Section>
-
-      {/* 2. About Section */}
-      <Section id="about" variant="subtle" className="scroll-mt-24 min-h-[60vh]">
+      {/* 2. About Section Placeholder (for navigation & scroll-spy) */}
+      <Section id="about" variant="subtle" className="scroll-mt-24 min-h-[50vh]">
         <div className="max-w-3xl">
           <div className="flex items-center gap-2 text-accent-electric text-xs font-mono font-medium mb-2">
             <User className="w-4 h-4" />
@@ -69,7 +31,7 @@ const PortfolioTestView = () => {
             <div className="bg-surface-1 border border-stroke-muted p-4 rounded-xl">
               <h4 className="text-xs font-mono text-accent-electric mb-1">EDUCATION</h4>
               <p className="text-sm font-semibold text-text-primary">BSc in Computer Science</p>
-              <p className="text-xs text-text-muted">Core Foundation in Algorithms, Systems & Databases</p>
+              <p className="text-xs text-text-muted">Algorithms, Distributed Systems & Database Design</p>
             </div>
             <div className="bg-surface-1 border border-stroke-muted p-4 rounded-xl">
               <h4 className="text-xs font-mono text-accent-electric mb-1">EXPERIENCE</h4>
@@ -80,8 +42,8 @@ const PortfolioTestView = () => {
         </div>
       </Section>
 
-      {/* 3. Skills Section */}
-      <Section id="skills" variant="default" className="scroll-mt-24 min-h-[60vh]">
+      {/* 3. Skills Section Placeholder */}
+      <Section id="skills" variant="default" className="scroll-mt-24 min-h-[50vh]">
         <div className="max-w-3xl">
           <div className="flex items-center gap-2 text-accent-electric text-xs font-mono font-medium mb-2">
             <Cpu className="w-4 h-4" />
@@ -103,8 +65,8 @@ const PortfolioTestView = () => {
         </div>
       </Section>
 
-      {/* 4. Projects Section */}
-      <Section id="projects" variant="subtle" className="scroll-mt-24 min-h-[60vh]">
+      {/* 4. Projects Section Placeholder */}
+      <Section id="projects" variant="subtle" className="scroll-mt-24 min-h-[50vh]">
         <div className="max-w-3xl">
           <div className="flex items-center gap-2 text-accent-electric text-xs font-mono font-medium mb-2">
             <Layers className="w-4 h-4" />
@@ -131,8 +93,8 @@ const PortfolioTestView = () => {
         </div>
       </Section>
 
-      {/* 5. Experience Section */}
-      <Section id="experience" variant="default" className="scroll-mt-24 min-h-[60vh]">
+      {/* 5. Experience Section Placeholder */}
+      <Section id="experience" variant="default" className="scroll-mt-24 min-h-[50vh]">
         <div className="max-w-3xl">
           <div className="flex items-center gap-2 text-accent-electric text-xs font-mono font-medium mb-2">
             <Briefcase className="w-4 h-4" />
@@ -156,8 +118,8 @@ const PortfolioTestView = () => {
         </div>
       </Section>
 
-      {/* 6. Contact Section */}
-      <Section id="contact" variant="subtle" className="scroll-mt-24 min-h-[60vh]">
+      {/* 6. Contact Section Placeholder */}
+      <Section id="contact" variant="subtle" className="scroll-mt-24 min-h-[50vh]">
         <div className="max-w-3xl">
           <div className="flex items-center gap-2 text-accent-electric text-xs font-mono font-medium mb-2">
             <Mail className="w-4 h-4" />
@@ -193,7 +155,7 @@ export const App = () => {
       <Router>
         <MainLayout>
           <Routes>
-            <Route path="/" element={<PortfolioTestView />} />
+            <Route path="/" element={<PortfolioMainView />} />
           </Routes>
         </MainLayout>
       </Router>
