@@ -1,0 +1,117 @@
+{% extends "admin/index.html" %}
+{% load i18n static portfolio_admin_tags %}
+
+{% block content %}
+{% get_admin_dashboard_metrics as metrics %}
+
+<div style="margin-bottom: 28px;">
+  <!-- Portfolio Dashboard Summary Header -->
+  <div style="background: linear-gradient(135deg, #18181b 0%, #09090b 100%); border: 1px solid #27272a; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;">
+      <div>
+        <h2 style="margin: 0; font-size: 20px; font-weight: 700; color: #f4f4f5; letter-spacing: -0.01em;">
+          Muleta Sisay &mdash; Portfolio Control Center
+        </h2>
+        <p style="margin: 4px 0 0; font-size: 13px; color: #a1a1aa;">
+          Manage projects, technical skills, career timeline, and contact inquiries without modifying code.
+        </p>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        <a href="{% url 'admin:portfolio_project_add' %}" style="background: #10b981; color: #ffffff; padding: 7px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+          <span>+ Add Project</span>
+        </a>
+        <a href="{% url 'admin:contact_contactmessage_changelist' %}?is_read__exact=0" style="background: {% if metrics.unread_messages > 0 %}#b45309{% else %}#27272a{% endif %}; color: #ffffff; padding: 7px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+          <span>✉ Unread Inquiries ({{ metrics.unread_messages }})</span>
+        </a>
+        <a href="/api/v1/health/" target="_blank" style="background: #27272a; color: #a1a1aa; padding: 7px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none;">
+          API Health Probe ↗
+        </a>
+      </div>
+    </div>
+
+    <!-- 4 Metric Cards Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-top: 20px;">
+      
+      <!-- Card 1: Projects -->
+      <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid #3f3f46; border-radius: 6px; padding: 14px 16px;">
+        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #a1a1aa; font-weight: 600;">Projects Showcase</div>
+        <div style="margin-top: 6px; display: flex; align-items: baseline; gap: 8px;">
+          <span style="font-size: 24px; font-weight: 700; color: #10b981;">{{ metrics.published_projects }}</span>
+          <span style="font-size: 13px; color: #71717a;">/ {{ metrics.total_projects }} total</span>
+        </div>
+        <div style="margin-top: 4px; font-size: 12px; color: #a1a1aa;">
+          <span style="color: #38bdf8; font-weight: 600;">{{ metrics.featured_projects }}</span> featured flagship(s)
+        </div>
+        <div style="margin-top: 8px;">
+          <a href="{% url 'admin:portfolio_project_changelist' %}" style="font-size: 11px; color: #10b981; font-weight: 600; text-decoration: none;">Manage Projects &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Card 2: Skills -->
+      <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid #3f3f46; border-radius: 6px; padding: 14px 16px;">
+        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #a1a1aa; font-weight: 600;">Skills & Stack</div>
+        <div style="margin-top: 6px; display: flex; align-items: baseline; gap: 8px;">
+          <span style="font-size: 24px; font-weight: 700; color: #38bdf8;">{{ metrics.total_skills }}</span>
+          <span style="font-size: 13px; color: #71717a;">technologies</span>
+        </div>
+        <div style="margin-top: 4px; font-size: 12px; color: #a1a1aa;">
+          Across <span style="color: #f4f4f5; font-weight: 600;">{{ metrics.categories_count }}</span> categories ({{ metrics.flagship_skills }} flagship)
+        </div>
+        <div style="margin-top: 8px;">
+          <a href="{% url 'admin:portfolio_skill_changelist' %}" style="font-size: 11px; color: #38bdf8; font-weight: 600; text-decoration: none;">Review Skills &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Card 3: Profile Status -->
+      <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid #3f3f46; border-radius: 6px; padding: 14px 16px;">
+        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #a1a1aa; font-weight: 600;">Active Profile</div>
+        <div style="margin-top: 6px; display: flex; align-items: center; gap: 6px;">
+          {% if metrics.active_profile %}
+            <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
+            <span style="font-size: 14px; font-weight: 700; color: #f4f4f5;">{{ metrics.active_profile.full_name }}</span>
+          {% else %}
+            <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></span>
+            <span style="font-size: 13px; font-weight: 600; color: #f87171;">No Active Profile</span>
+          {% endif %}
+        </div>
+        <div style="margin-top: 4px; font-size: 12px; color: #a1a1aa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          {% if metrics.active_profile %}
+            {{ metrics.active_profile.title }}
+          {% else %}
+            Set a profile to active in admin
+          {% endif %}
+        </div>
+        <div style="margin-top: 8px;">
+          <a href="{% url 'admin:portfolio_profile_changelist' %}" style="font-size: 11px; color: #10b981; font-weight: 600; text-decoration: none;">Edit Profile &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Card 4: Inbound Messages -->
+      <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid {% if metrics.unread_messages > 0 %}#f59e0b{% else %}#3f3f46{% endif %}; border-radius: 6px; padding: 14px 16px;">
+        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #a1a1aa; font-weight: 600;">Inbound Inquiries</div>
+        <div style="margin-top: 6px; display: flex; align-items: baseline; gap: 8px;">
+          <span style="font-size: 24px; font-weight: 700; color: {% if metrics.unread_messages > 0 %}#fbbf24{% else %}#10b981{% endif %};">
+            {{ metrics.unread_messages }}
+          </span>
+          <span style="font-size: 13px; color: #71717a;">unread / {{ metrics.total_messages }} total</span>
+        </div>
+        <div style="margin-top: 4px; font-size: 12px; color: #a1a1aa;">
+          {% if metrics.unread_messages > 0 %}
+            <span style="color: #fbbf24; font-weight: 600;">New messages require review</span>
+          {% else %}
+            All messages reviewed
+          {% endif %}
+        </div>
+        <div style="margin-top: 8px;">
+          <a href="{% url 'admin:contact_contactmessage_changelist' %}" style="font-size: 11px; color: #fbbf24; font-weight: 600; text-decoration: none;">View Inquiries &rarr;</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{{ block.super }}
+{% endblock %}

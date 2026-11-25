@@ -1,0 +1,1 @@
+# Modular Django Applications Package
