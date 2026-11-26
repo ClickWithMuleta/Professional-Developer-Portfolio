@@ -20,14 +20,16 @@ import Button from '../../components/common/Button';
 import IconButton from '../../components/common/IconButton';
 import Badge from '../../components/common/Badge';
 import { apiClient } from '../../services/apiClient';
-
-const CONTACT_EMAIL = import.meta.env.VITE_CONTACT_EMAIL || 'clickwithmuleta@gmail.com';
-const GITHUB_URL = 'https://github.com/ClickWithMuleta';
-const LINKEDIN_URL = 'https://linkedin.com/in/muleta-sisay';
+import { useProfile } from '../../hooks/usePortfolio';
 
 export const ContactSection = () => {
   const shouldReduceMotion = useReducedMotion();
+  const { profile } = useProfile();
   const [copiedEmail, setCopiedEmail] = useState(false);
+
+  const contactEmail = profile.email || import.meta.env.VITE_CONTACT_EMAIL || 'clickwithmuleta@gmail.com';
+  const githubUrl = profile.githubUrl || 'https://github.com/ClickWithMuleta';
+  const linkedinUrl = profile.linkedinUrl || 'https://linkedin.com/in/muleta-sisay';
 
   // Form State
   const [formData, setFormData] = useState({
@@ -45,7 +47,7 @@ export const ContactSection = () => {
   // Handle email copy to clipboard
   const handleCopyEmail = async () => {
     try {
-      await navigator.clipboard.writeText(CONTACT_EMAIL);
+      await navigator.clipboard.writeText(contactEmail);
       setCopiedEmail(true);
       setTimeout(() => setCopiedEmail(false), 2000);
     } catch (err) {
@@ -53,7 +55,7 @@ export const ContactSection = () => {
     }
   };
 
-  // Client-side validation
+  // Client-side validation aligned with backend constraints
   const validateForm = () => {
     const newErrors = {};
 
@@ -61,6 +63,8 @@ export const ContactSection = () => {
       newErrors.name = 'Please provide your name.';
     } else if (formData.name.trim().length < 2) {
       newErrors.name = 'Name must be at least 2 characters.';
+    } else if (formData.name.trim().length > 120) {
+      newErrors.name = 'Name must not exceed 120 characters.';
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -68,18 +72,24 @@ export const ContactSection = () => {
       newErrors.email = 'Please provide your email address.';
     } else if (!emailRegex.test(formData.email.trim())) {
       newErrors.email = 'Please enter a valid email address.';
+    } else if (formData.email.trim().length > 254) {
+      newErrors.email = 'Email address is too long.';
     }
 
     if (!formData.subject.trim()) {
       newErrors.subject = 'Please enter a subject.';
-    } else if (formData.subject.trim().length < 3) {
-      newErrors.subject = 'Subject must be at least 3 characters.';
+    } else if (formData.subject.trim().length < 4) {
+      newErrors.subject = 'Subject must be at least 4 characters.';
+    } else if (formData.subject.trim().length > 200) {
+      newErrors.subject = 'Subject must not exceed 200 characters.';
     }
 
     if (!formData.message.trim()) {
       newErrors.message = 'Please include a message.';
-    } else if (formData.message.trim().length < 10) {
-      newErrors.message = 'Message must be at least 10 characters.';
+    } else if (formData.message.trim().length < 20) {
+      newErrors.message = 'Message must be at least 20 characters.';
+    } else if (formData.message.trim().length > 4000) {
+      newErrors.message = 'Message must not exceed 4000 characters.';
     }
 
     setErrors(newErrors);
@@ -116,12 +126,13 @@ export const ContactSection = () => {
     setErrorMessage('');
 
     try {
-      // Connect to centralized Axios client (prepared for Django DRF backend)
+      // Connect to centralized Axios client targeting POST /api/v1/contact/
       await apiClient.post('/contact/', {
-        sender_name: formData.name.trim(),
-        sender_email: formData.email.trim(),
+        name: formData.name.trim(),
+        email: formData.email.trim(),
         subject: formData.subject.trim(),
-        message_body: formData.message.trim(),
+        message: formData.message.trim(),
+        website_url_hp: formData.website_url_hp || '',
       });
 
       setSubmitStatus('success');
@@ -133,12 +144,25 @@ export const ContactSection = () => {
         website_url_hp: '',
       });
     } catch (error) {
-      // Strict honesty: do NOT fake success when backend is unreachable or not yet online
       setSubmitStatus('error');
-      setErrorMessage(
-        error.message ||
-        'The backend API is currently initializing or unreachable. Please email me directly using the address on the left.'
-      );
+
+      // Map backend field-specific validation errors directly into form error fields
+      if (error.details && typeof error.details === 'object') {
+        const fieldErrors = {};
+        for (const [key, val] of Object.entries(error.details)) {
+          fieldErrors[key] = Array.isArray(val) ? val[0] : val;
+        }
+        setErrors((prev) => ({ ...prev, ...fieldErrors }));
+      }
+
+      if (error.status === 429) {
+        setErrorMessage('Rate limit reached (maximum 5 messages per hour). Please wait or email directly.');
+      } else {
+        setErrorMessage(
+          error.message ||
+          'The backend API is currently unavailable. Please email me directly using the address on the left.'
+        );
+      }
     }
   };
 
@@ -173,10 +197,10 @@ export const ContactSection = () => {
               </span>
               <div className="flex items-center justify-between gap-2 mb-3">
                 <a
-                  href={`mailto:${CONTACT_EMAIL}`}
+                  href={`mailto:${contactEmail}`}
                   className="font-mono text-sm sm:text-base font-semibold text-text-primary hover:text-accent transition-colors truncate"
                 >
-                  {CONTACT_EMAIL}
+                  {contactEmail}
                 </a>
                 <button
                   onClick={handleCopyEmail}
@@ -207,7 +231,7 @@ export const ContactSection = () => {
 
               <div className="space-y-3">
                 <a
-                  href={GITHUB_URL}
+                  href={githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-between p-3 rounded-xl bg-surface-2 hover:bg-surface-3 border border-stroke-muted hover:border-stroke-active transition-all group"
@@ -229,7 +253,7 @@ export const ContactSection = () => {
                 </a>
 
                 <a
-                  href={LINKEDIN_URL}
+                  href={linkedinUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-between p-3 rounded-xl bg-surface-2 hover:bg-surface-3 border border-stroke-muted hover:border-stroke-active transition-all group"

@@ -151,6 +151,10 @@ class Project(TimeStampedModel):
     short_description = models.TextField(
         help_text="Brief compelling overview displayed on the project card."
     )
+    highlights = models.TextField(
+        blank=True,
+        help_text="Key feature highlights or core engineering capabilities, separated by newlines."
+    )
     detailed_description = models.TextField(
         blank=True,
         help_text="In-depth case study, problem statement, architecture, and engineering tradeoffs."
@@ -208,6 +212,12 @@ class Project(TimeStampedModel):
         if not self.slug:
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
+
+    def get_highlights_list(self):
+        """Splits newline-separated highlights into a clean list."""
+        if not self.highlights:
+            return []
+        return [h.strip() for h in self.highlights.split('\n') if h.strip()]
 
     def __str__(self):
         return self.title

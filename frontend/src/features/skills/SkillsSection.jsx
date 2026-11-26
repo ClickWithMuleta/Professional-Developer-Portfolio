@@ -21,6 +21,8 @@ import {
 } from 'lucide-react';
 import Container from '../../components/common/Container';
 import Badge from '../../components/common/Badge';
+import EmptyState from '../../components/common/EmptyState';
+import { useSkills } from '../../hooks/usePortfolio';
 import { SKILL_CATEGORIES, SKILLS_DATA } from './skillsData';
 
 // Map icon keys to crisp Lucide icons
@@ -51,21 +53,22 @@ const ICON_MAP = {
 export const SkillsSection = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const shouldReduceMotion = useReducedMotion();
+  const { skills, categories, loading } = useSkills();
 
   // Filter skills based on selected category
   const filteredSkills = useMemo(() => {
-    if (activeCategory === 'all') return SKILLS_DATA;
-    return SKILLS_DATA.filter((skill) => skill.category === activeCategory);
-  }, [activeCategory]);
+    if (activeCategory === 'all') return skills;
+    return skills.filter((skill) => skill.category === activeCategory);
+  }, [activeCategory, skills]);
 
   // Compute count for each category
   const categoryCounts = useMemo(() => {
-    const counts = { all: SKILLS_DATA.length };
-    SKILLS_DATA.forEach((skill) => {
+    const counts = { all: skills.length };
+    skills.forEach((skill) => {
       counts[skill.category] = (counts[skill.category] || 0) + 1;
     });
     return counts;
-  }, []);
+  }, [skills]);
 
   return (
     <section
@@ -91,14 +94,14 @@ export const SkillsSection = () => {
           {/* Quick Counter Badge */}
           <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-1 border border-stroke-muted text-xs font-mono text-text-secondary self-start md:self-end">
             <span className="w-2 h-2 rounded-full bg-accent-electric inline-block" />
-            <span>{SKILLS_DATA.length} Production Technologies</span>
+            <span>{skills.length} Production Technologies</span>
           </div>
         </div>
 
         {/* Interactive Filter Tabs */}
         <div className="mb-10 overflow-x-auto pb-2 scrollbar-none">
           <div className="flex items-center gap-1.5 min-w-max bg-surface-1/90 border border-stroke-muted p-1.5 rounded-xl shadow-ambient">
-            {SKILL_CATEGORIES.map((cat) => {
+            {categories.map((cat) => {
               const isActive = activeCategory === cat.id;
               const count = categoryCounts[cat.id] || 0;
 
@@ -138,62 +141,71 @@ export const SkillsSection = () => {
         </div>
 
         {/* Dynamic Animated Skills Grid */}
-        <motion.div
-          layout={!shouldReduceMotion}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"
-        >
-          <AnimatePresence mode="popLayout">
-            {filteredSkills.map((skill) => (
-              <motion.div
-                key={skill.id}
-                layout={!shouldReduceMotion}
-                initial={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.94 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.94 }}
-                transition={{ duration: shouldReduceMotion ? 0.05 : 0.25, ease: [0.16, 1, 0.3, 1] }}
-                className="group relative p-5 rounded-xl bg-surface-1 border border-stroke-muted hover:border-stroke-active transition-all duration-200 shadow-ambient hover:shadow-float flex flex-col justify-between"
-              >
-                <div>
-                  {/* Top Row: Icon + Context Tag */}
-                  <div className="flex items-start justify-between gap-3 mb-3.5">
-                    <div className="w-10 h-10 rounded-lg bg-surface-2 border border-stroke-muted group-hover:border-accent/40 flex items-center justify-center shrink-0 transition-colors">
-                      {ICON_MAP[skill.iconKey] || <Code2 className="w-5 h-5 text-accent" />}
+        {filteredSkills.length === 0 ? (
+          <EmptyState
+            title="No skills found in this category"
+            description="There are currently no technologies recorded under this filter. Try selecting 'All Stack'."
+            onAction={() => setActiveCategory('all')}
+            actionLabel="View All Technologies"
+          />
+        ) : (
+          <motion.div
+            layout={!shouldReduceMotion}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"
+          >
+            <AnimatePresence mode="popLayout">
+              {filteredSkills.map((skill) => (
+                <motion.div
+                  key={skill.id}
+                  layout={!shouldReduceMotion}
+                  initial={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.94 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.94 }}
+                  transition={{ duration: shouldReduceMotion ? 0.05 : 0.25, ease: [0.16, 1, 0.3, 1] }}
+                  className="group relative p-5 rounded-xl bg-surface-1 border border-stroke-muted hover:border-stroke-active transition-all duration-200 shadow-ambient hover:shadow-float flex flex-col justify-between"
+                >
+                  <div>
+                    {/* Top Row: Icon + Context Tag */}
+                    <div className="flex items-start justify-between gap-3 mb-3.5">
+                      <div className="w-10 h-10 rounded-lg bg-surface-2 border border-stroke-muted group-hover:border-accent/40 flex items-center justify-center shrink-0 transition-colors">
+                        {ICON_MAP[skill.iconKey] || <Code2 className="w-5 h-5 text-accent" />}
+                      </div>
+
+                      <div className="flex flex-col items-end">
+                        <span className="font-mono text-[10px] uppercase tracking-wider text-accent-electric font-semibold px-2 py-0.5 rounded bg-accent/10 border border-accent/20">
+                          {skill.contextBadge}
+                        </span>
+                        {skill.isFlagship && (
+                          <span className="text-[9px] font-mono text-text-muted mt-1">
+                            Core Project Stack
+                          </span>
+                        )}
+                      </div>
                     </div>
 
-                    <div className="flex flex-col items-end">
-                      <span className="font-mono text-[10px] uppercase tracking-wider text-accent-electric font-semibold px-2 py-0.5 rounded bg-accent/10 border border-accent/20">
-                        {skill.contextBadge}
-                      </span>
-                      {skill.isFlagship && (
-                        <span className="text-[9px] font-mono text-text-muted mt-1">
-                          Core Project Stack
-                        </span>
-                      )}
-                    </div>
+                    {/* Skill Name */}
+                    <h3 className="text-base font-semibold text-text-primary mb-1.5 group-hover:text-accent-electric transition-colors">
+                      {skill.name}
+                    </h3>
+
+                    {/* Real Practical Engineering Context (No fake % bars) */}
+                    <p className="text-xs text-text-secondary leading-relaxed">
+                      {skill.description}
+                    </p>
                   </div>
 
-                  {/* Skill Name */}
-                  <h3 className="text-base font-semibold text-text-primary mb-1.5 group-hover:text-accent-electric transition-colors">
-                    {skill.name}
-                  </h3>
-
-                  {/* Real Practical Engineering Context (No fake % bars) */}
-                  <p className="text-xs text-text-secondary leading-relaxed">
-                    {skill.description}
-                  </p>
-                </div>
-
-                {/* Card Footer Micro-Indicator */}
-                <div className="mt-4 pt-3 border-t border-stroke-muted/60 flex items-center justify-between text-[11px] font-mono text-text-muted">
-                  <span className="capitalize">{skill.category}</span>
-                  <span className="text-accent group-hover:translate-x-0.5 transition-transform">
-                    Applied in production →
-                  </span>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+                  {/* Card Footer Micro-Indicator */}
+                  <div className="mt-4 pt-3 border-t border-stroke-muted/60 flex items-center justify-between text-[11px] font-mono text-text-muted">
+                    <span className="capitalize">{skill.category}</span>
+                    <span className="text-accent group-hover:translate-x-0.5 transition-transform">
+                      Applied in production →
+                    </span>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        )}
 
         {/* Bottom Architectural Callout */}
         <div className="mt-12 p-5 sm:p-6 rounded-xl bg-surface-1/60 border border-stroke-muted flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

@@ -153,6 +153,7 @@ class ProjectListSerializer(serializers.ModelSerializer):
     featured_image_url = serializers.SerializerMethodField()
     technologies = ProjectTechnologySerializer(many=True, read_only=True)
     metrics = ProjectMetricSerializer(many=True, read_only=True)
+    highlights = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
@@ -163,6 +164,7 @@ class ProjectListSerializer(serializers.ModelSerializer):
             'subtitle',
             'category',
             'short_description',
+            'highlights',
             'featured_image_url',
             'github_url',
             'live_demo_url',
@@ -173,6 +175,9 @@ class ProjectListSerializer(serializers.ModelSerializer):
             'created_at',
         ]
         read_only_fields = fields
+
+    def get_highlights(self, obj):
+        return obj.get_highlights_list()
 
     def get_featured_image_url(self, obj):
         if not obj.featured_image:

@@ -3,6 +3,7 @@ import { Menu, X, Github, FileDown, Sun, Moon, ArrowUpRight } from 'lucide-react
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../../context/ThemeContext';
 import { useScrollSpy } from '../../hooks/useScrollSpy';
+import { useProfile } from '../../hooks/usePortfolio';
 import IconButton from '../common/IconButton';
 import Button from '../common/Button';
 
@@ -19,6 +20,7 @@ export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const { profile } = useProfile();
 
   // Scroll spy tracking active section ID
   const activeSection = useScrollSpy(
@@ -166,7 +168,7 @@ export const Navbar = () => {
 
             {/* GitHub Profile Link */}
             <IconButton
-              href="https://github.com/ClickWithMuleta"
+              href={profile.githubUrl || 'https://github.com/ClickWithMuleta'}
               target="_blank"
               ariaLabel="Muleta Sisay GitHub profile"
               icon={<Github className="w-4 h-4" />}
@@ -176,7 +178,7 @@ export const Navbar = () => {
 
             {/* Resume Download Button */}
             <a
-              href="/resume.pdf"
+              href={profile.resumeUrl || '/resume.pdf'}
               download="Muleta_Sisay_Resume.pdf"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-stroke-muted bg-surface-2 hover:bg-surface-3 text-xs font-medium text-text-primary hover:border-stroke-active transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               aria-label="Download Muleta Sisay CV Resume"
@@ -271,7 +273,7 @@ export const Navbar = () => {
                 <div className="pt-4 mt-3 border-t border-stroke-muted flex flex-col gap-3">
                   <div className="grid grid-cols-2 gap-2">
                     <a
-                      href="/resume.pdf"
+                      href={profile.resumeUrl || '/resume.pdf'}
                       download="Muleta_Sisay_Resume.pdf"
                       className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-stroke-muted bg-surface-2 hover:bg-surface-3 text-xs font-medium text-text-primary text-center"
                     >
@@ -279,7 +281,7 @@ export const Navbar = () => {
                       <span>Resume</span>
                     </a>
                     <a
-                      href="https://github.com/ClickWithMuleta"
+                      href={profile.githubUrl || 'https://github.com/ClickWithMuleta'}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-stroke-muted bg-surface-2 hover:bg-surface-3 text-xs font-medium text-text-primary text-center"

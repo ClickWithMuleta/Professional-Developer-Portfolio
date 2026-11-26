@@ -2,6 +2,8 @@ import React from 'react';
 import { Github, Linkedin, Mail, ArrowUp, Terminal, Sparkles } from 'lucide-react';
 import Container from '../common/Container';
 import Badge from '../common/Badge';
+import ApiStatusBar from '../common/ApiStatusBar';
+import { useProfile } from '../../hooks/usePortfolio';
 
 const NAV_ITEMS = [
   { id: 'home', label: 'Home' },
@@ -12,11 +14,9 @@ const NAV_ITEMS = [
   { id: 'contact', label: 'Contact' },
 ];
 
-const CONTACT_EMAIL = import.meta.env.VITE_CONTACT_EMAIL || 'clickwithmuleta@gmail.com';
-const GITHUB_URL = 'https://github.com/ClickWithMuleta';
-const LINKEDIN_URL = 'https://linkedin.com/in/muleta-sisay';
-
 export const Footer = () => {
+  const { profile } = useProfile();
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -86,7 +86,7 @@ export const Footer = () => {
           <div className="md:col-span-3 flex flex-col items-start md:items-end justify-between h-full gap-4">
             <div className="flex items-center gap-2.5">
               <a
-                href={GITHUB_URL}
+                href={profile.githubUrl || 'https://github.com/ClickWithMuleta'}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Muleta Sisay GitHub"
@@ -96,7 +96,7 @@ export const Footer = () => {
               </a>
 
               <a
-                href={LINKEDIN_URL}
+                href={profile.linkedinUrl || 'https://linkedin.com/in/muleta-sisay'}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Muleta Sisay LinkedIn"
@@ -106,7 +106,7 @@ export const Footer = () => {
               </a>
 
               <a
-                href={`mailto:${CONTACT_EMAIL}`}
+                href={`mailto:${profile.email || 'clickwithmuleta@gmail.com'}`}
                 aria-label="Direct Email"
                 className="w-8 h-8 rounded-lg bg-surface-1 hover:bg-surface-2 border border-stroke-muted hover:border-stroke-active flex items-center justify-center text-text-secondary hover:text-accent-electric transition-all"
               >
@@ -132,9 +132,12 @@ export const Footer = () => {
             <span>Built with React, Vite, Tailwind CSS & Django REST Framework</span>
           </div>
 
-          <p className="font-mono text-[11px]">
-            © {new Date().getFullYear()} Muleta Sisay. All rights reserved.
-          </p>
+          <div className="flex items-center gap-4">
+            <ApiStatusBar />
+            <p className="font-mono text-[11px]">
+              © {new Date().getFullYear()} Muleta Sisay. All rights reserved.
+            </p>
+          </div>
         </div>
       </Container>
     </footer>

@@ -319,6 +319,7 @@ class ProjectAdmin(admin.ModelAdmin):
         ('Project Content', {
             'fields': (
                 'short_description',
+                'highlights',
                 'detailed_description',
                 'featured_image',
                 'image_preview_large',

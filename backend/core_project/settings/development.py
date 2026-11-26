@@ -18,6 +18,11 @@ CORS_ALLOWED_ORIGINS = env.list(
         'http://127.0.0.1:4173',
     ]
 )
+# In development, also accept any local port from localhost / 127.0.0.1 (e.g. Vite dynamic port 5174, 5175)
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^http://localhost:\d+$",
+    r"^http://127\.0\.0\.1:\d+$",
+]
 CORS_ALLOW_CREDENTIALS = True
 
 # Database: Uses PostgreSQL if DATABASE_URL is provided, else falls back to local SQLite

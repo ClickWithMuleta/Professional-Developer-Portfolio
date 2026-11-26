@@ -13,8 +13,15 @@ import {
   Cpu
 } from 'lucide-react';
 
-export const ProjectMockup = ({ projectId, isFeatured = false }) => {
-  if (projectId === 'smart-cashflow-tracker') {
+export const ProjectMockup = ({ projectId = '', isFeatured = false }) => {
+  const normalizedId = String(projectId).toLowerCase();
+
+  if (
+    normalizedId === 'smart-cashflow-tracker' ||
+    normalizedId === 'moibirr' ||
+    normalizedId.includes('cashflow') ||
+    normalizedId.includes('birr')
+  ) {
     return (
       <div className="w-full h-full bg-[#0d0d10] p-4 sm:p-5 flex flex-col justify-between select-none font-sans overflow-hidden">
         {/* Mockup Titlebar */}
@@ -93,7 +100,11 @@ export const ProjectMockup = ({ projectId, isFeatured = false }) => {
     );
   }
 
-  if (projectId === 'ehospital-harar') {
+  if (
+    normalizedId === 'ehospital-harar' ||
+    normalizedId.includes('hospital') ||
+    normalizedId.includes('ehs')
+  ) {
     return (
       <div className="w-full h-full bg-[#0d0d10] p-4 sm:p-5 flex flex-col justify-between select-none font-sans overflow-hidden">
         {/* Titlebar */}

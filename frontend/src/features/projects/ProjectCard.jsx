@@ -18,7 +18,25 @@ export const ProjectCard = ({ project, isFeatured = false }) => {
         {/* Project Visual Mockup Window */}
         <div className="relative w-full aspect-video sm:aspect-[16/10] overflow-hidden border-b border-stroke-muted bg-[#0d0d10]">
           <div className="w-full h-full transition-transform duration-500 ease-out group-hover:scale-[1.02]">
-            <ProjectMockup projectId={project.id} isFeatured={isFeatured} />
+            {project.featuredImageUrl ? (
+              <>
+                <img
+                  src={project.featuredImageUrl}
+                  alt={project.title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    const fallback = e.currentTarget.parentElement?.querySelector('.mockup-fallback');
+                    if (fallback) fallback.style.display = 'block';
+                  }}
+                />
+                <div className="mockup-fallback w-full h-full hidden">
+                  <ProjectMockup projectId={project.id || project.slug} isFeatured={isFeatured} />
+                </div>
+              </>
+            ) : (
+              <ProjectMockup projectId={project.id || project.slug} isFeatured={isFeatured} />
+            )}
           </div>
 
           {/* Featured Pill Overlay */}

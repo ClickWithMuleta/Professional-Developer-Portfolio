@@ -16,9 +16,11 @@ import {
 } from 'lucide-react';
 import Container from '../../components/common/Container';
 import Badge from '../../components/common/Badge';
+import { useProfile } from '../../hooks/usePortfolio';
 
 export const AboutSection = () => {
   const shouldReduceMotion = useReducedMotion();
+  const { profile } = useProfile();
 
   // Animation variants
   const containerVariants = {
@@ -107,12 +109,18 @@ export const AboutSection = () => {
           <div className="lg:col-span-7 space-y-8">
             {/* Personal Engineering Narrative */}
             <motion.div variants={itemVariants} className="space-y-4 text-text-secondary text-sm sm:text-base leading-relaxed">
-              <p>
-                My journey in software engineering is grounded in a deep curiosity for how complex systems operate behind the scenes. With a <strong className="text-text-primary font-medium">BSc in Computer Science</strong> and approximately <strong className="text-text-primary font-medium">two years of software development experience</strong>, I focus on building dependable applications that translate business requirements into clean, scalable software.
-              </p>
-              <p>
-                Rather than treating backend, frontend, and data as isolated silos, I take an end-to-end full-stack approach. I engineer robust REST APIs in <strong className="text-text-primary font-medium">Python & Django</strong>, design intuitive interfaces in <strong className="text-text-primary font-medium">React</strong>, optimize schemas in <strong className="text-text-primary font-medium">PostgreSQL</strong>, and incorporate predictive intelligence using <strong className="text-text-primary font-medium">LightGBM and Scikit-learn</strong>.
-              </p>
+              {profile?.bio ? (
+                <p className="whitespace-pre-line">{profile.bio}</p>
+              ) : (
+                <>
+                  <p>
+                    My journey in software engineering is grounded in a deep curiosity for how complex systems operate behind the scenes. With a <strong className="text-text-primary font-medium">BSc in Computer Science</strong> and approximately <strong className="text-text-primary font-medium">two years of software development experience</strong>, I focus on building dependable applications that translate business requirements into clean, scalable software.
+                  </p>
+                  <p>
+                    Rather than treating backend, frontend, and data as isolated silos, I take an end-to-end full-stack approach. I engineer robust REST APIs in <strong className="text-text-primary font-medium">Python & Django</strong>, design intuitive interfaces in <strong className="text-text-primary font-medium">React</strong>, optimize schemas in <strong className="text-text-primary font-medium">PostgreSQL</strong>, and incorporate predictive intelligence using <strong className="text-text-primary font-medium">LightGBM and Scikit-learn</strong>.
+                  </p>
+                </>
+              )}
             </motion.div>
 
             {/* Core Engineering Principles Grid */}

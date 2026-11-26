@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
+import { PortfolioProvider } from './context/PortfolioContext';
 import MainLayout from './components/layout/MainLayout';
 import HeroSection from './features/hero/HeroSection';
 import AboutSection from './features/about/AboutSection';
@@ -36,13 +37,15 @@ const PortfolioMainView = () => {
 export const App = () => {
   return (
     <ThemeProvider>
-      <Router>
-        <MainLayout>
-          <Routes>
-            <Route path="/" element={<PortfolioMainView />} />
-          </Routes>
-        </MainLayout>
-      </Router>
+      <PortfolioProvider>
+        <Router>
+          <MainLayout>
+            <Routes>
+              <Route path="/" element={<PortfolioMainView />} />
+            </Routes>
+          </MainLayout>
+        </Router>
+      </PortfolioProvider>
     </ThemeProvider>
   );
 };

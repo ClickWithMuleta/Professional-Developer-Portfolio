@@ -4,18 +4,21 @@ import { Layers, Github, ExternalLink, Sparkles, Code2, ArrowUpRight } from 'luc
 import Container from '../../components/common/Container';
 import Badge from '../../components/common/Badge';
 import Button from '../../components/common/Button';
+import EmptyState from '../../components/common/EmptyState';
 import ProjectCard from './ProjectCard';
+import { useProjects } from '../../hooks/usePortfolio';
 import { PROJECT_CATEGORIES, PROJECTS_DATA } from './projectsData';
 
 export const ProjectsSection = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const shouldReduceMotion = useReducedMotion();
+  const { projects, categories, loading } = useProjects();
 
   // Filter projects based on selected category
   const filteredProjects = useMemo(() => {
-    if (activeCategory === 'all') return PROJECTS_DATA;
-    return PROJECTS_DATA.filter((p) => p.filterCategories.includes(activeCategory));
-  }, [activeCategory]);
+    if (activeCategory === 'all') return projects;
+    return projects.filter((p) => p.filterCategories && p.filterCategories.includes(activeCategory));
+  }, [activeCategory, projects]);
 
   return (
     <section
@@ -54,11 +57,11 @@ export const ProjectsSection = () => {
         {/* Interactive Category Filter Tabs */}
         <div className="mb-10 overflow-x-auto pb-2 scrollbar-none">
           <div className="flex items-center gap-1.5 min-w-max bg-surface-1/90 border border-stroke-muted p-1.5 rounded-xl shadow-ambient">
-            {PROJECT_CATEGORIES.map((cat) => {
+            {categories.map((cat) => {
               const isActive = activeCategory === cat.id;
               const count = cat.id === 'all' 
-                ? PROJECTS_DATA.length 
-                : PROJECTS_DATA.filter((p) => p.filterCategories.includes(cat.id)).length;
+                ? projects.length 
+                : projects.filter((p) => p.filterCategories && p.filterCategories.includes(cat.id)).length;
 
               return (
                 <button
@@ -96,26 +99,35 @@ export const ProjectsSection = () => {
         </div>
 
         {/* Dynamic Responsive Projects Grid */}
-        <motion.div
-          layout={!shouldReduceMotion}
-          className="grid grid-cols-1 lg:grid-cols-2 gap-8"
-        >
-          <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project) => (
-              <motion.div
-                key={project.id}
-                layout={!shouldReduceMotion}
-                initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 }}
-                transition={{ duration: shouldReduceMotion ? 0.05 : 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className={project.isFeatured ? 'lg:col-span-2' : 'lg:col-span-1'}
-              >
-                <ProjectCard project={project} isFeatured={project.isFeatured} />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+        {filteredProjects.length === 0 ? (
+          <EmptyState
+            title="No projects match this category"
+            description="There are currently no projects matching your active category filter. Try viewing all projects."
+            onAction={() => setActiveCategory('all')}
+            actionLabel="View All Projects"
+          />
+        ) : (
+          <motion.div
+            layout={!shouldReduceMotion}
+            className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+          >
+            <AnimatePresence mode="popLayout">
+              {filteredProjects.map((project) => (
+                <motion.div
+                  key={project.id}
+                  layout={!shouldReduceMotion}
+                  initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 }}
+                  transition={{ duration: shouldReduceMotion ? 0.05 : 0.3, ease: [0.16, 1, 0.3, 1] }}
+                  className={project.isFeatured ? 'lg:col-span-2' : 'lg:col-span-1'}
+                >
+                  <ProjectCard project={project} isFeatured={project.isFeatured} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        )}
 
         {/* Footer Technical Note */}
         <div className="mt-12 p-5 rounded-xl bg-surface-1/70 border border-stroke-muted flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

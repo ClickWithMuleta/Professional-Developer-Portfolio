@@ -133,11 +133,22 @@ DEFAULT_FROM_EMAIL = env(
 
 # Admin inbox that receives contact form notifications.
 # Set to your real email in production. Leave empty to disable email dispatch.
-CONTACT_NOTIFICATION_EMAIL = env('CONTACT_NOTIFICATION_EMAIL', default='')
+CONTACT_NOTIFICATION_EMAIL = env(
+    'CONTACT_NOTIFICATION_EMAIL',
+    default=env('NOTIFICATION_RECIPIENT_EMAIL', default=''),
+)
 
 # Hard cap on request body size (default Django is 2.5 MB; we set 50 KB for the contact form)
 # This is enforced globally here; individual parsers also enforce field-level max_length.
 DATA_UPLOAD_MAX_MEMORY_SIZE = env.int('DATA_UPLOAD_MAX_MEMORY_SIZE', default=51200)  # 50 KB
+
+# CORS Headers Configuration
+from corsheaders.defaults import default_headers
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'x-client-timestamp',
+]
+CORS_ALLOW_CREDENTIALS = True
 
 # Django REST Framework Settings
 REST_FRAMEWORK = {

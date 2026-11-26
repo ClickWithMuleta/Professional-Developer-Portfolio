@@ -14,17 +14,20 @@ import {
 } from 'lucide-react';
 import Container from '../../components/common/Container';
 import Badge from '../../components/common/Badge';
+import EmptyState from '../../components/common/EmptyState';
+import { useTimeline } from '../../hooks/usePortfolio';
 import { TIMELINE_FILTERS, TIMELINE_DATA } from './experienceData';
 
 export const ExperienceTimeline = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const shouldReduceMotion = useReducedMotion();
+  const { timeline, loading } = useTimeline();
 
   // Filter items based on active tab
   const filteredData = useMemo(() => {
-    if (activeFilter === 'all') return TIMELINE_DATA;
-    return TIMELINE_DATA.filter((item) => item.type === activeFilter);
-  }, [activeFilter]);
+    if (activeFilter === 'all') return timeline;
+    return timeline.filter((item) => item.type === activeFilter);
+  }, [activeFilter, timeline]);
 
   return (
     <section
@@ -60,8 +63,8 @@ export const ExperienceTimeline = () => {
             {TIMELINE_FILTERS.map((tab) => {
               const isActive = activeFilter === tab.id;
               const count = tab.id === 'all'
-                ? TIMELINE_DATA.length
-                : TIMELINE_DATA.filter((item) => item.type === tab.id).length;
+                ? timeline.length
+                : timeline.filter((item) => item.type === tab.id).length;
 
               return (
                 <button
@@ -99,9 +102,17 @@ export const ExperienceTimeline = () => {
         </div>
 
         {/* Editorial Vertical Timeline */}
-        <div className="relative border-l border-stroke-muted/80 ml-3 sm:ml-6 pl-6 sm:pl-10 space-y-10 sm:space-y-12">
-          <AnimatePresence mode="popLayout">
-            {filteredData.map((item) => {
+        {filteredData.length === 0 ? (
+          <EmptyState
+            title="No timeline records found"
+            description="There are currently no milestones matching your active filter. Try selecting 'All Milestones'."
+            onAction={() => setActiveFilter('all')}
+            actionLabel="View All Milestones"
+          />
+        ) : (
+          <div className="relative border-l border-stroke-muted/80 ml-3 sm:ml-6 pl-6 sm:pl-10 space-y-10 sm:space-y-12">
+            <AnimatePresence mode="popLayout">
+              {filteredData.map((item) => {
               const isEducation = item.type === 'education';
 
               return (
@@ -216,6 +227,7 @@ export const ExperienceTimeline = () => {
             })}
           </AnimatePresence>
         </div>
+        )}
 
         {/* Education & Experience Bottom Callout */}
         <div className="mt-14 p-5 sm:p-6 rounded-xl bg-surface-1/60 border border-stroke-muted flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

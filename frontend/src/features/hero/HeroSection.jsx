@@ -17,9 +17,11 @@ import Container from '../../components/common/Container';
 import Button from '../../components/common/Button';
 import Badge from '../../components/common/Badge';
 import IconButton from '../../components/common/IconButton';
+import { useProfile } from '../../hooks/usePortfolio';
 
 export const HeroSection = () => {
   const shouldReduceMotion = useReducedMotion();
+  const { profile } = useProfile();
 
   // Animation variants
   const containerVariants = {
@@ -91,21 +93,21 @@ export const HeroSection = () => {
             {/* Availability & Developer Status Badge */}
             <motion.div variants={itemVariants} className="mb-6 flex flex-wrap items-center gap-2.5">
               <Badge variant="accent" size="md" withDot dotColor="bg-accent-electric">
-                Available for opportunities
+                {profile.availabilityStatus || 'Available for opportunities'}
               </Badge>
               <span className="hidden sm:inline-block text-stroke-muted">•</span>
               <span className="text-xs font-mono text-text-muted">
-                Addis Ababa, ET / Remote
+                {profile.location || 'Addis Ababa, ET / Remote'}
               </span>
             </motion.div>
 
             {/* Engineer Name & Identification */}
             <motion.div variants={itemVariants} className="mb-3">
               <span className="font-mono text-xs sm:text-sm text-accent-electric uppercase tracking-wider font-semibold">
-                Muleta Sisay
+                {profile.fullName || 'Muleta Sisay'}
               </span>
               <p className="text-sm font-medium text-text-secondary mt-0.5">
-                Software Developer • ~2 Years Experience • BSc in Computer Science
+                {profile.title || 'Software Developer'} • ~2 Years Experience • BSc in Computer Science
               </p>
             </motion.div>
 
@@ -144,7 +146,7 @@ export const HeroSection = () => {
               </Button>
 
               <a
-                href="/resume.pdf"
+                href={profile.resumeUrl || '/resume.pdf'}
                 download="Muleta_Sisay_Resume.pdf"
                 className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg border border-stroke-muted bg-surface-2 hover:bg-surface-3 text-text-primary hover:border-stroke-active text-base font-medium transition-all w-full sm:w-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               >
@@ -155,7 +157,7 @@ export const HeroSection = () => {
               {/* Quick Social Links */}
               <div className="flex items-center gap-2 pt-2 sm:pt-0">
                 <IconButton
-                  href="https://github.com/ClickWithMuleta"
+                  href={profile.githubUrl || 'https://github.com/ClickWithMuleta'}
                   target="_blank"
                   ariaLabel="Muleta Sisay GitHub Profile"
                   icon={<Github className="w-4 h-4" />}
@@ -163,7 +165,7 @@ export const HeroSection = () => {
                   size="md"
                 />
                 <IconButton
-                  href="https://linkedin.com/in/muleta-sisay"
+                  href={profile.linkedinUrl || 'https://linkedin.com/in/muleta-sisay'}
                   target="_blank"
                   ariaLabel="Muleta Sisay LinkedIn Profile"
                   icon={<Linkedin className="w-4 h-4" />}
